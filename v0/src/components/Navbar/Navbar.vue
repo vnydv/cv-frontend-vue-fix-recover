@@ -9,6 +9,27 @@
         >
             <NavbarLinks :navbar-data="navbarData" />
 
+            <!-- smaller input field -->
+            <div class="input-group mb-3 ml-3" style="max-width: 250px; padding-top: 1vh;">
+                <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    placeholder="Enter circuit ID to collaborate"
+                    v-model="shareId"
+                />
+                <button class="btn btn-outline-secondary btn-sm" @click="startCollab(shareId)">
+                    Collab
+                </button>
+            </div>
+
+            <!-- show number of active collaborators -->
+            <span class="active-collaborators" style="margin-left: 1rem; color: white;">
+                <!-- show self if 0  -->
+                <!-- 0 -> not connected to server -->
+                <!-- 1 -> only self -->
+                Active: {{ collabProjectStore.getCollaborators.length }}
+            </span>
+
             <span
                 id="projectName"
                 class="projectName noSelect defaultCursor font-weight-bold"
@@ -22,6 +43,10 @@
 </template>
 
 <script lang="ts" setup>
+
+import { startCollab } from '../../simulator/src/data/collabProject'
+import { useCollabProjectStore } from '#/store/collabProjectStore'
+
 import QuickButton from '@/Navbar/QuickButton/QuickButton.vue'
 import User from '@/Navbar/User/User.vue'
 import NavbarLinks from '@/Navbar/NavbarLinks/NavbarLinks.vue'
@@ -40,6 +65,8 @@ import { useProjectStore } from '#/store/projectStore'
 const navbarLogo = ref('logo')
 const projectStore = useProjectStore()
 const simulatorMobileStore = useSimulatorMobileStore()
+const collabProjectStore = useCollabProjectStore()
+
 </script>
 
 <style scoped>

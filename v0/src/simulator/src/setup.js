@@ -25,6 +25,7 @@ import '../vendor/jquery-ui.min.css'
 import '../vendor/jquery-ui.min'
 import { confirmSingleOption } from '#/components/helpers/confirmComponent/ConfirmComponent.vue'
 import { getToken } from '#/pages/simulatorHandler.vue'
+import { usePromptStore } from '#/store/promptStore'
 
 /**
  * to resize window and setup things it
@@ -82,6 +83,9 @@ window.addEventListener('orientationchange', resetup) // listener
 function setupEnvironment() {
     setupModules()
     const projectId = generateId()
+    console.log('Setting up environment with projectId:', projectId);
+    const promptStore = usePromptStore()
+    promptStore.setProjectId(projectId)
     window.projectId = projectId
     updateSimulationSet(true)
     // const DPR = window.devicePixelRatio || 1 // unused variable
@@ -89,6 +93,8 @@ function setupEnvironment() {
     window.data = {}
     resetup()
     setupCodeMirrorEnvironment()
+
+    console.log('Environment setup complete');
 }
 
 /**
@@ -176,12 +182,16 @@ function showTour() {
  * @category setup
  */
 export function setup() {
+
+    console.log('Starting application setup');
+
     setupEnvironment()
     if (!embed) {
         setupUI()
         startMainListeners()
     }
     // startListeners()
+    console.log('Setup complete, loading project data if available');
     loadProjectData()
     showTour()
 }

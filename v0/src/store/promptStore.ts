@@ -43,7 +43,7 @@ interface promptStoreType {
     }
     UpdateProjectDetail: {
         activate: boolean
-        projectId: number
+        projectId: string
         projectName: string
         projectTags: string
         projectType: Readonly<any> | string
@@ -89,7 +89,7 @@ export const usePromptStore = defineStore({
         setProjectName(projectName: string): void {
             this.UpdateProjectDetail.projectName = projectName
         },
-        setProjectId(projectId: number): void {
+        setProjectId(projectId: string): void {
             this.UpdateProjectDetail.projectId = projectId
         },
     },
@@ -97,7 +97,7 @@ export const usePromptStore = defineStore({
         getProjectName(): string {
             return this.UpdateProjectDetail.projectName
         },
-        getProjectId(): number {
+        getProjectId(): string {
             return this.UpdateProjectDetail.projectId
         },
         getProjectTags(): string {

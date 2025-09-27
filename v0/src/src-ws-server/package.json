@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "start": "node server.ts"
+  },
+  "type": "module",
+
+  "dependencies": {    
+    "ws": "^8.18.3",
+    "yjs": "^13.6.27"
+  }
+}
