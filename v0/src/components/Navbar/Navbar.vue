@@ -30,6 +30,18 @@
                 Active: {{ collabProjectStore.getCollaborators.length }}
             </span>
 
+           <!-- Show projectId from Collab if collab enabled -->
+            <span
+                v-if="collabProjectStore.getEnableCollab"
+                id="projectId"
+                class="projectId noSelect defaultCursor font-weight-bold ml-3"
+                @click="copyProjectId"
+            >
+                <p style="display: inline; color: white; cursor: pointer;">
+                    Project ID: {{ collabProjectStore.getProjectId }}
+                </p>
+            </span>
+
             <span
                 id="projectName"
                 class="projectName noSelect defaultCursor font-weight-bold"
@@ -67,6 +79,17 @@ const navbarLogo = ref('logo')
 const promptStore = usePromptStore()
 const simulatorMobileStore = useSimulatorMobileStore()
 const collabProjectStore = useCollabProjectStore()
+
+const copyProjectId = async () => {
+    try {
+        await navigator.clipboard.writeText(collabProjectStore.getProjectId)
+        alert('Project ID copied to clipboard for collaboration!')
+        console.log('Project ID copied:', collabProjectStore.getProjectId)
+        // optional: add toast/snackbar notification
+    } catch (err) {
+        console.error('Failed to copy Project ID:', err)
+    }
+}
 
 </script>
 
