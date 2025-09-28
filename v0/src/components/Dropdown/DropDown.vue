@@ -6,7 +6,7 @@
                 class="dropdown-item"
                 :class="
                     dropDownType == 'navLink'
-                        ? 'logixButton text-left pl-1'
+                        ? 'loginButton text-left pl-1'
                         : ''
                 "
                 style="white-space: pre-line"

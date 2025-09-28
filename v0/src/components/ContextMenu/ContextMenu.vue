@@ -18,7 +18,7 @@ import undo from '../../simulator/src/data/undo'
 import { paste } from '../../simulator/src/events'
 import { deleteSelected } from '../../simulator/src/ux'
 import { createNewCircuitScope } from '../../simulator/src/circuit'
-import logixFunction from '../../simulator/src/data'
+import loginFunction from '../../simulator/src/data'
 
 export default {
     name: 'ContextMenu',
@@ -72,7 +72,7 @@ export default {
             } else if (id == 5) {
                 createNewCircuitScope()
             } else if (id == 6) {
-                logixFunction.createSubCircuitPrompt()
+                loginFunction.createSubCircuitPrompt()
             } else if (id == 7) {
                 globalScope.centerFocus(false)
             }

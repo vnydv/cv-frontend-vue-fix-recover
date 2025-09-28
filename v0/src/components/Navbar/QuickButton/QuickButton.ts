@@ -1,4 +1,4 @@
-import logixFunction from '#/simulator/src/data'
+import loginFunction from '#/simulator/src/data'
 import { deleteSelected } from '#/simulator/src/ux'
 import undo from '#/simulator/src/data/undo'
 import redo from '#/simulator/src/data/redo'
@@ -6,16 +6,16 @@ import { fullView } from '#/simulator/src/ux'
 import { ZoomIn, ZoomOut } from '#/simulator/src/listeners'
 
 export function saveOnline(): void {
-    logixFunction.save()
+    loginFunction.save()
 }
 export function saveOffline(): void {
-    logixFunction.saveOffline()
+    loginFunction.saveOffline()
 }
 export function deleteSelectedItem(): void {
     deleteSelected()
 }
 export function createSaveAsImgPrompt(): void {
-    logixFunction.createSaveAsImgPrompt()
+    loginFunction.createSaveAsImgPrompt()
 }
 export function zoomToFit(): void {
     globalScope.centerFocus(false)

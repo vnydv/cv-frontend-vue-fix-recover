@@ -136,7 +136,7 @@ describe('data dir working', () => {
     });
 
     test('save updated circuit_data', () => {
-        window.logixProjectId = decoderCircuitData.projectId;
+        window.loginProjectId = decoderCircuitData.projectId;
         expect(() => save()).not.toThrow();
     });
 

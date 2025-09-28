@@ -39,7 +39,7 @@
               :id="element.name"
               :key="element.name"
               :title="element.label"
-              class="icon logixModules"
+              class="icon loginModules"
               @click="createElement(element.name)"
               @mousedown="createElement(element.name)"
               @mouseover="getTooltipText(element.name)"

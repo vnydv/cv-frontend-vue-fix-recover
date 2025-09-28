@@ -395,7 +395,7 @@ export default async function save() {
             loadingIcon.style.opacity = '0';
         }
         // eslint-disable-next-line camelcase
-    } else if ([0, undefined, null, '', '0'].includes(window.logixProjectId)) {
+    } else if ([0, undefined, null, '', '0'].includes(window.loginProjectId)) {
         // Create new project - this part needs to be improved and optimised
         // const form = $('<form/>', {
         //     action: '/api/v1/simulator/create',
@@ -475,7 +475,7 @@ export default async function save() {
         // },
         // data: JSON.stringify({
         // data,
-        // id: logixProjectId,
+        // id: loginProjectId,
         // image: imageData,
         // name: projectName,
         // }),
@@ -504,7 +504,7 @@ export default async function save() {
             headers,
             body: JSON.stringify({
                 data,
-                id: window.logixProjectId,
+                id: window.loginProjectId,
                 image: imageData,
                 name: projectName,
             }),

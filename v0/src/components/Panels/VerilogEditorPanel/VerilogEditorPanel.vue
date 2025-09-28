@@ -76,7 +76,7 @@ import {
 } from '#/simulator/src/Verilog2CV'
 import PanelHeader from '../Shared/PanelHeader.vue'
 import { ref, Ref, watch, onMounted } from 'vue'
-// import logixFunction from '#/simulator/src/data'
+// import loginFunction from '#/simulator/src/data'
 
 const selectedTheme: Ref<string> = ref(
     localStorage.getItem('verilog-theme') || 'default'

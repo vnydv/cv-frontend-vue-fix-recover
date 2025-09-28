@@ -32,7 +32,7 @@ const simulatorMobileStore = useSimulatorMobileStore()
 
 // check if user has edit access to the project
 async function checkEditAccess() {
-    await fetch(`/api/v1/projects/${window.logixProjectId}/check_edit_access`, {
+    await fetch(`/api/v1/projects/${window.loginProjectId}/check_edit_access`, {
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -85,9 +85,11 @@ async function getLoginData() {
 onBeforeMount(() => {
     // set project id if /edit/:projectId route is used
 
-    ;(window as any).logixProjectId = route.params.projectId
+    console.log('onBeforeMount - route params:', route.params)
+
+    ;(window as any).loginProjectId = route.params.projectId
     // only execute if projectId is defined
-    if ((window as any).logixProjectId) {
+    if ((window as any).loginProjectId) {
         checkEditAccess()
     } else {
         // if projectId is not defined open blank simulator
@@ -98,6 +100,7 @@ onBeforeMount(() => {
 
 onMounted(() => {
     window.addEventListener('resize', checkShowSidebar)
+    console.log('onMounted - added resize event listener')
 })
 function checkShowSidebar() {
     simulatorMobileStore.showMobileView = window.innerWidth < simulatorMobileStore.minWidthToShowMobile ? true : false

@@ -34,7 +34,7 @@ import redo from './data/redo'
 import { copy, paste, selectAll } from './events'
 import { verilogModeGet } from './Verilog2CV'
 import { setupTimingListeners } from './plotArea'
-import logixFunction from './data'
+import loginFunction from './data'
 import { listen } from '@tauri-apps/api/event'
 import { useSimulatorMobileStore } from '#/store/simulatorMobileStore'
 import { toRefs } from 'vue'
@@ -791,89 +791,89 @@ function handleZoom (direction) {
 // Desktop App Listeners
 
 listen('new-project', () => {
-    logixFunction.newProject();
+    loginFunction.newProject();
 });
 
 listen('save-online', () => {
-    logixFunction.save();
+    loginFunction.save();
 });
 
 listen('save-offline', () => {
-    logixFunction.saveOffline();
+    loginFunction.saveOffline();
 });
 
 listen('open-offline', () => {
-    logixFunction.createOpenLocalPrompt();
+    loginFunction.createOpenLocalPrompt();
 });
 
 listen('export', () => {
-    logixFunction.ExportProject();
+    loginFunction.ExportProject();
 });
 
 listen('import', () => {
-    logixFunction.ImportProject();
+    loginFunction.ImportProject();
 });
 
 listen('recover', () => {
-    logixFunction.recoverProject();
+    loginFunction.recoverProject();
 });
 
 listen('clear', () => {
-    logixFunction.clearProject();
+    loginFunction.clearProject();
 });
 
 listen('preview-circuit', () => {
-    logixFunction.fullViewOption();
+    loginFunction.fullViewOption();
 });
 
 listen('new-circuit', () => {
-    logixFunction.createNewCircuitScope();
+    loginFunction.createNewCircuitScope();
 });
 
 listen('new-verilog-module', () => {
-    logixFunction.newVerilogModule();
+    loginFunction.newVerilogModule();
 });
 
 listen('insert-sub-circuit', () => {
-    logixFunction.createSubCircuitPrompt();
+    loginFunction.createSubCircuitPrompt();
 });
 
 listen('combinational-analysis', () => {
-    logixFunction.createCombinationalAnalysisPrompt();
+    loginFunction.createCombinationalAnalysisPrompt();
 });
 
 listen('hex-bin-dec', () => {
-    logixFunction.bitconverter();
+    loginFunction.bitconverter();
 });
 
 listen('download-image', () => {
-    logixFunction.createSaveAsImgPrompt();
+    loginFunction.createSaveAsImgPrompt();
 });
 
 listen('themes', () => {
-    logixFunction.colorThemes();
+    loginFunction.colorThemes();
 });
 
 listen('custom-shortcut', () => {
-    logixFunction.customShortcut();
+    loginFunction.customShortcut();
 });
 
 listen('export-verilog', () => {
-    logixFunction.generateVerilog();
+    loginFunction.generateVerilog();
 });
 
 listen('tutorial', () => {
-    logixFunction.showTourGuide();
+    loginFunction.showTourGuide();
 });
 
 listen('user-manual', () => {
-    logixFunction.showUserManual();
+    loginFunction.showUserManual();
 });
 
 listen('learn-digital-circuit', () => {
-    logixFunction.showDigitalCircuit();
+    loginFunction.showDigitalCircuit();
 });
 
 listen('discussion-forum', () => {
-    logixFunction.showDiscussionForum();
+    loginFunction.showDiscussionForum();
 });

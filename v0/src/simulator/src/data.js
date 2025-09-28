@@ -21,29 +21,29 @@ import { keyBinder } from '#/components/DialogBox/CustomShortcut.vue'
 import { ExportProject } from '#/components/DialogBox/ExportProject.vue'
 import { ImportProject } from '#/components/DialogBox/ImportProject.vue'
 
-const logixFunction = {}
-logixFunction.save = save
-logixFunction.load = load
-logixFunction.createSaveAsImgPrompt = createSaveAsImgPrompt
-logixFunction.clearProject = clearProject
-logixFunction.newProject = newProject
-logixFunction.saveOffline = saveOffline
-logixFunction.createOpenLocalPrompt = openOffline
-logixFunction.recoverProject = recoverProject
-logixFunction.createSubCircuitPrompt = createSubCircuitPrompt
-logixFunction.createCombinationalAnalysisPrompt =
+const loginFunction = {}
+loginFunction.save = save
+loginFunction.load = load
+loginFunction.createSaveAsImgPrompt = createSaveAsImgPrompt
+loginFunction.clearProject = clearProject
+loginFunction.newProject = newProject
+loginFunction.saveOffline = saveOffline
+loginFunction.createOpenLocalPrompt = openOffline
+loginFunction.recoverProject = recoverProject
+loginFunction.createSubCircuitPrompt = createSubCircuitPrompt
+loginFunction.createCombinationalAnalysisPrompt =
     createCombinationalAnalysisPrompt
-logixFunction.fullViewOption = fullView
-logixFunction.colorThemes = colorThemes
-logixFunction.showTourGuide = showTourGuideHelper
-logixFunction.newVerilogModule = createVerilogCircuit
-logixFunction.generateVerilog = generateVerilog
-logixFunction.bitconverter = bitConverterDialog
-logixFunction.createNewCircuitScope = createNewCircuit
-logixFunction.customShortcut = keyBinder
-logixFunction.ExportProject = ExportProject
-logixFunction.ImportProject = ImportProject
-export default logixFunction
+loginFunction.fullViewOption = fullView
+loginFunction.colorThemes = colorThemes
+loginFunction.showTourGuide = showTourGuideHelper
+loginFunction.newVerilogModule = createVerilogCircuit
+loginFunction.generateVerilog = generateVerilog
+loginFunction.bitconverter = bitConverterDialog
+loginFunction.createNewCircuitScope = createNewCircuit
+loginFunction.customShortcut = keyBinder
+loginFunction.ExportProject = ExportProject
+loginFunction.ImportProject = ImportProject
+export default loginFunction
 
 // Hack to restart tour guide
 function showTourGuideHelper() {

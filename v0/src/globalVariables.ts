@@ -7,7 +7,7 @@ import jQuery from 'jquery'
 window.$ = window.jQuery = jQuery
 
 window.isUserLoggedIn = false
-window.logixProjectId = undefined
+window.loginProjectId = undefined
 
 window.restrictedElements = []
 window.globalScope = undefined

@@ -182,7 +182,7 @@ import TabsBar from '#/components/TabsBar/TabsBar.vue'
 import { updateThemeForStyle } from '#/simulator/src/themer/themer'
 import { THEME, ThemeType } from '#/assets/constants/theme'
 // import { time } from 'console'
-// __logix_project_id = "<%= @logix_project_id %>";
+// __login_project_id = "<%= @login_project_id %>";
 // embed=true;
 // <% if @project&.assignment_id.present? %>
 // restrictedElements = JSON.parse('<%= raw @project&.assignment.clean_restricted_elements %>');
@@ -237,7 +237,7 @@ watch(clockEnabled, (val) => {
 
 onBeforeMount(() => {
     window.embed = true
-    window.logixProjectId = route.params.projectId
+    window.loginProjectId = route.params.projectId
 })
 
 onMounted(() => {

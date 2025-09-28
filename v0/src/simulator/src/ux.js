@@ -10,7 +10,7 @@ import {
     updateCanvasSet
 } from './engine'
 import { simulationArea } from './simulationArea'
-import logixFunction from './data'
+import loginFunction from './data'
 import { circuitProperty } from './circuit'
 import { updateRestrictedElementsInScope } from './restrictedElementDiv'
 import { dragging } from './drag'
@@ -146,8 +146,8 @@ export function setupUI() {
     })
     document.getElementById('canvasArea').oncontextmenu = showContextMenu
 
-    $('.logixButton').on('click', function () {
-        logixFunction[this.id]()
+    $('.loginButton').on('click', function () {
+        loginFunction[this.id]()
     })
     setupPanels()
 }

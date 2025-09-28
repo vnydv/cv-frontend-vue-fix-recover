@@ -22,7 +22,7 @@ import { moduleList, updateOrder } from './metadata'
 export function paste(copyData) {
     if (copyData === 'undefined') return
     var data = JSON.parse(copyData)
-    if (!data.logixClipBoardData) return
+    if (!data.loginClipBoardData) return
 
     var currentScopeId = globalScope.id
     for (let i = 0; i < data.scopes.length; i++) {
@@ -188,13 +188,13 @@ export function cut(copyList) {
     updateSimulationSet(true)
 
     var data = backUp(globalScope)
-    data.logixClipBoardData = true
+    data.loginClipBoardData = true
     var dependencyList = globalScope.getDependencies()
     data.dependencies = {}
     Object.keys(dependencyList).forEach((dependency) => {
         data.dependencies[dependency] = backUp(scopeList[dependency])
     })
-    data.logixClipBoardData = true
+    data.loginClipBoardData = true
     data = JSON.stringify(data)
 
     simulationArea.multipleObjectSelections = []
@@ -292,7 +292,7 @@ export function copy(copyList, cutflag = false) {
     for (let i = 0; i < requiredDependencies.length; i++) {
         saveScope(requiredDependencies[i])
     }
-    data.logixClipBoardData = true
+    data.loginClipBoardData = true
     data.testbenchData = undefined // Don't copy testbench data
     data = JSON.stringify(data)
     simulationArea.multipleObjectSelections = []

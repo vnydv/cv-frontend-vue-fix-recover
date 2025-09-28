@@ -25,7 +25,7 @@
                   :key="index"
                   density="compact"
                   :id="listItem.itemid"
-                  @click.stop="logixFunction[listItem.itemid]()"
+                  @click.stop="loginFunction[listItem.itemid]()"
                   v-bind="
                   Object.fromEntries(
                       listItem.attributes.map((attr:AttrType) => [
@@ -51,7 +51,7 @@
 
 <script lang="ts" setup>
 // import DropDown from '@/Dropdown/DropDown.vue'
-import logixFunction from '#/simulator/src/data'
+import loginFunction from '#/simulator/src/data'
 import { ref } from 'vue'
 interface AttrType {
   name: string
