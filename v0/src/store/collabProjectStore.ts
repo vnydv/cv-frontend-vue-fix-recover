@@ -4,9 +4,8 @@
 import { defineStore } from 'pinia'
 import * as Y from 'yjs'
 import { generateSaveData } from '../simulator/src/data/save'
-import { startMinimalCollab } from '../simulator/src/data/collabProject'
+import { startMinimalCollab, applyRemoteElementChange, deleteRemoteElement } from '../simulator/src/data/collabProject'
 import { constructNodeConnections, replace } from '../simulator/src/node'
-import { loadModule } from '../simulator/src/data/load'
 import { usePromptStore } from './promptStore'
 import { start } from '@popperjs/core'
 
@@ -116,6 +115,18 @@ export const useCollabProjectStore = defineStore({
                             const newName = this.getYjsMap.get('projectName')
                             console.log('projectName changed in Yjs map:', newName)
                             promptStore.setProjectName(newName || 'Untitled')
+                        }
+                    })
+                })
+
+                // Listen for element additions/updates
+                this.yElements.observe((event) => {
+                    event.changes.keys.forEach((change, key) => {
+                        if (change.action === 'add' || change.action === 'update') {
+                            const elementData = this.yElements.get(key)
+                            applyRemoteElementChange(elementData)
+                        } else if (change.action === 'delete') {
+                            deleteRemoteElement(key)
                         }
                     })
                 })

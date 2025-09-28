@@ -1,5 +1,6 @@
 import { useCollabProjectStore } from '#/store/collabProjectStore'
 import { usePromptStore } from '#/store/promptStore'
+import modules from '../modules'
 
 export function startCollab(shareId: string | null) {
     const promptStore = usePromptStore()
@@ -97,6 +98,8 @@ export function syncToCollab(element) {
     }
 }
 
+
+
 export function deleteFromCollab(elementId) {
     try {
         const collabStore = useCollabProjectStore()
@@ -121,5 +124,84 @@ export function startMinimalCollab() {
             syncElementToYjs(element)
         })
         console.log('Synced existing elements:', globalScope.allElements.length)
+    }
+}
+
+
+// Yjs to local changes
+export function applyRemoteElementChange(elementData: any) {
+    // Find existing element
+    const existingElement = findElementById(elementData.id)
+    
+    if (existingElement) {
+        // Update existing element
+        updateRemoteElement(existingElement, elementData)
+    } else {
+        // Create new element
+        createRemoteElement(elementData)
+    }
+}
+
+function findElementById(id: string) {
+    // Search through all element types in scope
+    for (const [elementType, elements] of Object.entries(globalScope)) {
+        if (Array.isArray(elements)) {
+            const found = elements.find(el => el.id === id)
+            if (found) return found
+        }
+    }
+    return null
+}
+
+function createRemoteElement(elementData: any) {
+    // Mark as remote to prevent sync loops
+    const tempRemoteFlag = true
+    
+    // Create element using the factory
+    const element = new modules[elementData.objectType]()
+    element._isRemoteUpdate = true
+    element.id = elementData.id
+    
+    // Apply properties
+    element.x = elementData.x
+    element.y = elementData.y
+    element.label = elementData.label || ''
+    element.direction = elementData.direction
+    element.labelDirection = elementData.labelDirection
+    element.bitWidth = elementData.bitWidth
+    
+    // Apply custom data if available
+    if (elementData.customData && element.customLoad) {
+        element.customLoad(elementData.customData)
+    }
+    
+    console.log('Created remote element:', element.id)
+}
+
+function updateRemoteElement(element: any, elementData: any) {
+    // Prevent sync loops
+    element._isRemoteUpdate = true
+    
+    // Update properties
+    element.x = elementData.x
+    element.y = elementData.y
+    element.label = elementData.label || ''
+    element.direction = elementData.direction
+    element.labelDirection = elementData.labelDirection
+    
+    // Clear flag after update
+    setTimeout(() => {
+        element._isRemoteUpdate = false
+    }, 0)
+    
+    console.log('Updated remote element:', element.id)
+}
+
+export function deleteRemoteElement(elementId: string) {
+    const element = findElementById(elementId)
+    if (element) {
+        element._isRemoteUpdate = true
+        element.delete()
+        console.log('Deleted remote element:', elementId)
     }
 }

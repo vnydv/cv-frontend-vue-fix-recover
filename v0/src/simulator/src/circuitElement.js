@@ -15,7 +15,6 @@ import { layoutModeGet, tempBuffer } from './layoutMode'
 import { fillSubcircuitElements } from './ux'
 import { generateNodeName } from './verilogHelpers'
 
-
 import { syncToCollab, deleteFromCollab } from './data/collabProject'
 
 /**
@@ -149,13 +148,12 @@ export default class CircuitElement {
      * @param {Scope} scope - the circuit in which we add element
      */
     updateScope(scope) {
-        const oldScope = this.scope;
+        const oldScope = this.scope
 
         this.scope = scope
         for (let i = 0; i < this.nodeList.length; i++) {
             this.nodeList[i].scope = scope
         }
-
     }
 
     /**
@@ -263,7 +261,14 @@ export default class CircuitElement {
      * @memberof CircuitElement
      */
     drag() {
-        console.log('Dragging element:', this.objectType, this.id, 'at position:', this.x, this.y);
+        console.log(
+            'Dragging element:',
+            this.objectType,
+            this.id,
+            'at position:',
+            this.x,
+            this.y
+        )
 
         if (!layoutModeGet()) {
             this.x =
@@ -387,7 +392,10 @@ export default class CircuitElement {
                     if (
                         simulationArea.multipleObjectSelections.includes(this)
                     ) {
-                        simulationArea.multipleObjectSelections = simulationArea.multipleObjectSelections.filter(x => x !== this);
+                        simulationArea.multipleObjectSelections =
+                            simulationArea.multipleObjectSelections.filter(
+                                (x) => x !== this
+                            )
                     } else {
                         simulationArea.multipleObjectSelections.push(this)
                     }
@@ -397,8 +405,15 @@ export default class CircuitElement {
             }
         }
 
-        console.log("Updated element:", this.objectType, this.id,  'at position:', this.x, this.y);
-        syncToCollab(this)  // Sync element state to collaboration backend
+        console.log(
+            'Updated element:',
+            this.objectType,
+            this.id,
+            'at position:',
+            this.x,
+            this.y
+        )
+        syncToCollab(this) // Sync element state to collaboration backend
 
         return update
     }
@@ -491,8 +506,12 @@ export default class CircuitElement {
      * NOT OVERRIDABLE
      */
     isHover() {
-        var mX = simulationArea.touch ? simulationArea.mouseDownX - this.x : simulationArea.mouseXf - this.x;
-        var mY = simulationArea.touch ? this.y - simulationArea.mouseDownY : this.y - simulationArea.mouseYf;
+        var mX = simulationArea.touch
+            ? simulationArea.mouseDownX - this.x
+            : simulationArea.mouseXf - this.x
+        var mY = simulationArea.touch
+            ? this.y - simulationArea.mouseDownY
+            : this.y - simulationArea.mouseYf
 
         var rX = this.rightDimensionX
         var lX = this.leftDimensionX
@@ -549,8 +568,14 @@ export default class CircuitElement {
     setLabel(label) {
         this.label = label || ''
 
-        console.log("Set label of element:", this.objectType, this.id, 'to:', this.label);
-        syncToCollab(this)  // Sync element state to collaboration backend
+        console.log(
+            'Set label of element:',
+            this.objectType,
+            this.id,
+            'to:',
+            this.label
+        )
+        syncToCollab(this) // Sync element state to collaboration backend
     }
 
     /**
@@ -749,7 +774,9 @@ export default class CircuitElement {
     // OVERRIDE WITH CAUTION
     delete() {
         simulationArea.lastSelected = undefined
-        this.scope[this.objectType] = this.scope[this.objectType].filter(x => x !== this)
+        this.scope[this.objectType] = this.scope[this.objectType].filter(
+            (x) => x !== this
+        )
         if (this.deleteNodesWhenDeleted) {
             this.deleteNodes()
         } else {
@@ -763,8 +790,11 @@ export default class CircuitElement {
         }
         this.deleted = true
 
-        console.log("Deleted element:", this.objectType, this.id);
-        deleteFromCollab(this.id)  // Delete element from collaboration backend
+        console.log('Deleted element:', this.objectType, this.id)
+
+        if (!this._isRemoteUpdate && this.id) {
+            deleteFromCollab(this.id) // Use ID instead of this
+        }
     }
 
     /**
