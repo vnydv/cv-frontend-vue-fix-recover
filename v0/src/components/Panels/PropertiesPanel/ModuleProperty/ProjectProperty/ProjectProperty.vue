@@ -7,8 +7,8 @@
             type="text"
             autocomplete="off"
             name="setProjectName"
-            v-model="projectStore.project.name"
-            :oninput="projectStore.setProjectNameDefined"
+            v-model="projectName"
+            class="objectPropertyAttribute"
         />
     </p>
 
@@ -108,17 +108,23 @@ import InputGroups from '#/components/Panels/Shared/InputGroups.vue'
 // import MessageBox from '#/components/MessageBox/messageBox.vue'
 // import { ref, Ref, onMounted, watch } from 'vue'
 import { useState } from '#/store/SimulatorStore/state'
-import { useProjectStore } from '#/store/projectStore'
+import { usePromptStore } from '#/store/promptStore'
 // import DeleteCircuit from '#/components/helpers/deleteCircuit/DeleteCircuit.vue'
 import { closeCircuit } from '#/components/helpers/deleteCircuit/DeleteCircuit.vue'
 import { useSimulatorMobileStore } from '#/store/simulatorMobileStore'
 import { watch } from 'vue'
 import { ref } from 'vue'
+import { computed } from 'vue'
 
-const projectStore = useProjectStore()
+const promptStore = usePromptStore()
 const SimulatorState = <SimulatorStateType>useState()
 const circnameInput = ref<HTMLInputElement | null>(null)
 const simulatorMobileStore = useSimulatorMobileStore()
+
+const projectName = computed({
+  get: () => promptStore.getProjectName,
+  set: (val: string) => promptStore.setProjectName(val),
+});
 
 watch(() => SimulatorState.circuit_name_clickable, () => {
     setTimeout(() => {
