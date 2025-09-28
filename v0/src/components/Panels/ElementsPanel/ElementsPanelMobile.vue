@@ -41,7 +41,6 @@
               :title="element.label"
               class="icon loginModules"
               @click="createElement(element.name)"
-              @mousedown="createElement(element.name)"
               @mouseover="getTooltipText(element.name)"
               @mouseleave="tooltipText = ''"
             >

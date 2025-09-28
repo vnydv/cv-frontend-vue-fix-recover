@@ -34,8 +34,7 @@
                     :key="element.name"
                     :title="element.label"
                     class="icon loginModules"
-                    @click="createElement(element.name)"
-                    @mousedown="createElement(element.name)"
+                    @click="createElement(element.name)"                    
                     @mouseover="getTooltipText(element.name)"
                     @mouseleave="tooltipText = 'null'"
                 >
@@ -68,8 +67,7 @@
                                 :key="element"
                                 :title="element.label"
                                 class="icon loginModules"
-                                @click="createElement(element.name)"
-                                @mousedown="createElement(element.name)"
+                                @click="createElement(element.name)"                                
                                 @mouseover="getTooltipText(element.name)"
                                 @mouseleave="tooltipText = 'null'"
                             >
@@ -114,8 +112,7 @@
                                 :key="element"
                                 :title="element.label"
                                 class="icon loginModules"
-                                @click="createElement(element.name)"
-                                @mousedown="createElement(element.name)"
+                                @click="createElement(element.name)"                                
                                 @mouseover="getTooltipText(element.name)"
                                 @mouseleave="tooltipText = 'null'"
                             >
