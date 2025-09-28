@@ -24,7 +24,6 @@ import { toRefs } from 'vue'
 import { moduleList } from '../metadata'
 import { usePromptStore } from '#/store/promptStore'
 import { useCollabProjectStore } from '#/store/collabProjectStore'
-import { initObservers } from '#/simulator/src/data/collabProject'
 
 /**
  * Backward compatibility - needs to be deprecated
@@ -222,9 +221,6 @@ export function setupProjectMetadata(id=undefined, name=undefined) {
     // create a new yjs doc for this project
     const collabProjectStore = useCollabProjectStore()
     collabProjectStore.setNewYjsDoc(undefined) // using undefined to get a new doc
-
-    initObservers() // enable collaboration observers
-
 }
     
 

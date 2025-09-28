@@ -43,6 +43,8 @@ wss.on('connection', (ws) => {
                 console.log(`User ${user.name} joined room ${currentRoom}`)
             }
 
+            console.log(`Room ${currentRoom} now has ${room.users.length} user(s)`)
+
             // broadcast collaborators
             const collaborators = room.users.map(u => u.user)
             room.users.forEach(({ ws: client }) =>
@@ -79,7 +81,7 @@ wss.on('connection', (ws) => {
             // sender user
             const sender = room.users.find(u => u.ws === ws)?.user
 
-            // console.log(`Received update from user ${sender?.name} in room ${currentRoom}`)
+            console.log(`Received update from user ${sender?.name} in room ${currentRoom}`)
 
             // rebroadcast to others
             room.users.forEach(({ ws: client }) => {

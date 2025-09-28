@@ -4,6 +4,12 @@
 import { defineStore } from 'pinia'
 import * as Y from 'yjs'
 import { generateSaveData } from '../simulator/src/data/save'
+import { startMinimalCollab } from '../simulator/src/data/collabProject'
+import { constructNodeConnections, replace } from '../simulator/src/node'
+import { loadModule } from '../simulator/src/data/load'
+import { usePromptStore } from './promptStore'
+import { start } from '@popperjs/core'
+
 
 interface collabStoreType {
     enableCollab: boolean
@@ -13,6 +19,8 @@ interface collabStoreType {
     yjsDoc?: any
     yjsMap?: any
     wsConnection?: any
+    yElements?: any
+    yNodes?: any
 }
 
 // Flow
@@ -60,7 +68,10 @@ export const useCollabProjectStore = defineStore({
         collaborators: [],
         yjsDoc: undefined,
         yjsMap: undefined,
+        yElements: undefined,
+        yNodes: undefined,
         wsConnection: undefined
+
     }),
     actions: {
         doEnableCollab(show: boolean): void {
@@ -73,14 +84,18 @@ export const useCollabProjectStore = defineStore({
         updateCollaborators(collaborators: Array<{ id: number; name: string; avatar: string }>): void {
             this.collaborators = collaborators
         },
-        setYjsDoc(doc: any): void {
-            this.yjsDoc = doc
-            this.yjsMap = this.yjsDoc.getMap('projectData')
-        },
         setNewYjsDoc(): void {
             if (!this.yjsDoc) {
                 this.yjsDoc = new Y.Doc()
                 this.yjsMap = this.yjsDoc.getMap('projectData')
+
+                // the required CircuitElements without connections
+                // necessary to render the elements on the canvas
+                this.yElements = this.yjsDoc.getMap('elements')  // stores CircuitElements
+
+                // the Node connections between elements for wires etc.
+                // wires can be derived from this on the client sides
+                this.yNodes = this.yjsDoc.getMap('nodes')        // stores Node connections
 
                 this.yjsDoc.on('update', (update: Uint8Array) => {
                     const ws = this.wsConnection
@@ -93,6 +108,18 @@ export const useCollabProjectStore = defineStore({
                         console.log('Sent Yjs update to server')
                     }
                 })
+
+                this.getYjsMap.observe((event: any) => {
+                    const promptStore = usePromptStore()
+                    event.changes.keys.forEach((change: any, key: string) => {
+                        if (key === 'projectName') {
+                            const newName = this.getYjsMap.get('projectName')
+                            console.log('projectName changed in Yjs map:', newName)
+                            promptStore.setProjectName(newName || 'Untitled')
+                        }
+                    })
+                })
+
             }
         },
 
@@ -155,14 +182,17 @@ export const useCollabProjectStore = defineStore({
                     const update = new Uint8Array(data.update)
                     Y.applyUpdate(this.yjsDoc, update)
                     console.log('Applied Yjs update from server')
+                    // print the update keys
+                    console.log('Update keys:', Array.from(update))
                 }
             }
-
 
             ws.onopen = () => {
                 console.log('WS connected')
                 console.log('Enabling collaboration for projectId:', this.projectId)
                 this.doEnableCollab(true)
+
+                startMinimalCollab()
 
                 // Send join message with doc update
                 this.joinRoom({ id: this.userId, name: `User${this.userId}`, avatar: 'dummy.png' })
@@ -206,6 +236,18 @@ export const useCollabProjectStore = defineStore({
             }
 
             return this.yjsMap
-        }
+        },
+        getYElements(): any {
+            if (!this.yElements && this.getYjsDoc) {
+                this.yElements = this.yjsDoc.getMap('elements')
+            }
+            return this.yElements
+        },
+        getYNodes(): any {
+            if (!this.yNodes && this.getYjsDoc) {
+                this.yNodes = this.yjsDoc.getMap('nodes')
+            }
+            return this.yNodes
+        },
     },
 })

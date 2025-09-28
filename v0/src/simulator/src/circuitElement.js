@@ -15,6 +15,9 @@ import { layoutModeGet, tempBuffer } from './layoutMode'
 import { fillSubcircuitElements } from './ux'
 import { generateNodeName } from './verilogHelpers'
 
+
+import { syncToCollab, deleteFromCollab } from './data/collabProject'
+
 /**
  * Base class for circuit elements.
  * @param {number} x - x coordinate of the element
@@ -146,10 +149,13 @@ export default class CircuitElement {
      * @param {Scope} scope - the circuit in which we add element
      */
     updateScope(scope) {
+        const oldScope = this.scope;
+
         this.scope = scope
         for (let i = 0; i < this.nodeList.length; i++) {
             this.nodeList[i].scope = scope
         }
+
     }
 
     /**
@@ -257,6 +263,8 @@ export default class CircuitElement {
      * @memberof CircuitElement
      */
     drag() {
+        console.log('Dragging element:', this.objectType, this.id, 'at position:', this.x, this.y);
+
         if (!layoutModeGet()) {
             this.x =
                 this.oldx + simulationArea.mouseX - simulationArea.mouseDownX
@@ -388,6 +396,9 @@ export default class CircuitElement {
                 }
             }
         }
+
+        console.log("Updated element:", this.objectType, this.id,  'at position:', this.x, this.y);
+        syncToCollab(this)  // Sync element state to collaboration backend
 
         return update
     }
@@ -537,6 +548,9 @@ export default class CircuitElement {
      */
     setLabel(label) {
         this.label = label || ''
+
+        console.log("Set label of element:", this.objectType, this.id, 'to:', this.label);
+        syncToCollab(this)  // Sync element state to collaboration backend
     }
 
     /**
@@ -748,6 +762,9 @@ export default class CircuitElement {
             }
         }
         this.deleted = true
+
+        console.log("Deleted element:", this.objectType, this.id);
+        deleteFromCollab(this.id)  // Delete element from collaboration backend
     }
 
     /**

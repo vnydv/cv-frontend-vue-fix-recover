@@ -26,8 +26,6 @@ import '../vendor/jquery-ui.min'
 import { confirmSingleOption } from '#/components/helpers/confirmComponent/ConfirmComponent.vue'
 import { getToken } from '#/pages/simulatorHandler.vue'
 import { usePromptStore } from '#/store/promptStore'
-import { initObservers } from '#/simulator/src/data/collabProject'
-import { useCollabProjectStore } from '#/store/collabProjectStore'
 
 /**
  * to resize window and setup things it
