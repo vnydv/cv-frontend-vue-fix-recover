@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 interface AuthStoreType {
     isLoggedIn: boolean
-    userId: string | number
+    userId: string | undefined
     username: string
     userAvatar: string
     locale: string
@@ -23,30 +23,30 @@ export const useAuthStore = defineStore({
     id: 'authStore',
     state: (): AuthStoreType => ({
         isLoggedIn: false,
-        userId: '',
-        username: 'Guest',
+        userId: undefined,
+        username: '',
         userAvatar: 'default',
         locale: 'en',
         isAdmin: false,
     }),
     actions: {
-        setUserInfo(userInfo: UserInfo): void {
+        setUserInfo(userInfo: UserInfo | undefined): void {
             this.isLoggedIn = true
-            this.userId = userInfo.id ?? ''
-            this.username = userInfo.attributes.name ?? 'Guest'
-            if (userInfo.attributes.profile_picture != 'original/Default.jpg') {
+            this.userId = userInfo?.id ?? Math.floor(Math.random() * 10000).toString()
+            this.username = userInfo?.attributes.name ?? 'Guest' + this.userId
+            if (userInfo?.attributes.profile_picture != 'original/Default.jpg') {
                 this.userAvatar =
-                    userInfo.attributes.profile_picture ?? 'default'
+                    userInfo?.attributes.profile_picture ?? 'default'
             }
-            this.locale = userInfo.attributes.locale ?? 'en'
-            this.isAdmin = userInfo.attributes.admin
+            this.locale = userInfo?.attributes.locale ?? 'en'
+            this.isAdmin = userInfo?.attributes.admin ?? false
         },
     },
     getters: {
         getIsLoggedIn(): boolean {
             return this.isLoggedIn
         },
-        getUserId(): string | number {
+        getUserId(): string {
             return this.userId
         },
         getUsername(): string {

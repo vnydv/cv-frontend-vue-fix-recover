@@ -10,13 +10,13 @@ import { startMinimalCollab, applyRemoteElementChange, deleteRemoteElement,
 import { constructNodeConnections, replace } from '../simulator/src/node'
 import { usePromptStore } from './promptStore'
 import { start } from '@popperjs/core'
-
+import { useAuthStore } from './authStore'
+import Underline from '@tiptap/extension-underline'
 
 interface collabStoreType {
-    enableCollab: boolean
-    userId: number
+    enableCollab: boolean    
     projectId?: string
-    collaborators: Array<{ id: number; name: string; avatar: string }>
+    collaborators: Array<{ id: string; name: string; avatar: string }>
     yjsDoc?: any
     yjsMap?: any
     wsConnection?: any
@@ -61,10 +61,6 @@ export const useCollabProjectStore = defineStore({
     id: 'collabStore',
     state: (): collabStoreType => ({
         enableCollab: false,
-        // in real app, this data should come from the auth system
-        // here we just use dummy data
-        // get a random id between 1 and 10000                
-        userId: Math.floor(Math.random() * 10000), // random user id for demo purpose
         projectId: undefined,
         collaborators: [],
         yjsDoc: undefined,
@@ -82,7 +78,7 @@ export const useCollabProjectStore = defineStore({
             this.projectId = projectId
         },
         // data is sent to the server when user connects
-        updateCollaborators(collaborators: Array<{ id: number; name: string; avatar: string }>): void {
+        updateCollaborators(collaborators: Array<{ id: string; name: string; avatar: string }>): void {
             this.collaborators = collaborators
         },
         setNewYjsDoc(): void {
@@ -154,15 +150,15 @@ export const useCollabProjectStore = defineStore({
                 const message = {
                     type: 'leave',
                     projectId: this.projectId,
-                    userId: this.userId
+                    userId: useAuthStore().getUserId
                 }
                 ws.send(JSON.stringify(message))
-                console.log('Sent leave for userId:', this.userId)
+                console.log('Sent leave for userId:', useAuthStore().getUserId)
             } else {
                 console.warn('WebSocket is not connected. Cannot send leave message.')
             }
         },
-        joinRoom(user: { id: number; name: string; avatar: string }): void {
+        joinRoom(user: { id: string; name: string; avatar: string }): void {
             const ws = this.wsConnection
             if (ws && ws.readyState === WebSocket.OPEN) {
                 // Only send local update if the doc has content and server may be empty
@@ -220,7 +216,7 @@ export const useCollabProjectStore = defineStore({
                 startMinimalCollab()
 
                 // Send join message with doc update
-                this.joinRoom({ id: this.userId, name: `User${this.userId}`, avatar: 'dummy.png' })
+                this.joinRoom({ id: useAuthStore().getUserId, name: useAuthStore().getUsername, avatar: 'dummy.png' })
             }
 
             ws.onclose = () => {
@@ -244,7 +240,7 @@ export const useCollabProjectStore = defineStore({
         // may need to send events to update the collaborators when
         // a new user joins or leaves for now just check every few seconds
         // the server will send the collaborators data
-        getCollaborators(): Array<{ id: number; name: string; avatar: string }> {
+        getCollaborators(): Array<{ id: string; name: string; avatar: string }> {
             return this.collaborators
         },
 

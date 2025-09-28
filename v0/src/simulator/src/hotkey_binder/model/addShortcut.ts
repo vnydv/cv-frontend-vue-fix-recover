@@ -12,7 +12,7 @@ import createSaveAsImgPrompt from '../../data/saveImage'
 import { createSubCircuitPrompt } from '../../subcircuit'
 import { createCombinationalAnalysisPrompt } from '../../combinationalAnalysis'
 import { shortcut } from './shortcuts.plugin'
-import logixFunction from '../../data'
+import loginFunction from '../../data'
 import { ShortcutOptions } from './model.types'
 
 export type ActionType =
@@ -48,7 +48,7 @@ export const addShortcut = (
 
     switch (action) {
         case 'New Circuit':
-            callback = logixFunction.createNewCircuitScope
+            callback = loginFunction.createNewCircuitScope
             break
         case 'Save Online':
             callback = save

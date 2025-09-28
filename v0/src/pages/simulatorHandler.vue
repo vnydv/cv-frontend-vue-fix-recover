@@ -74,7 +74,7 @@ async function getLoginData() {
             const data = await response.json()
             authStore.setUserInfo(data.data)
             ;(window as any).isUserLoggedIn = true
-        } else if (response.status === 401) {
+        } else if (response.status === 401) {            
             ;(window as any).isUserLoggedIn = false
         }
     } catch (err) {
@@ -90,11 +90,15 @@ onBeforeMount(() => {
     ;(window as any).loginProjectId = route.params.projectId
     // only execute if projectId is defined
     if ((window as any).loginProjectId) {
-        checkEditAccess()
+        checkEditAccess()        
     } else {
         // if projectId is not defined open blank simulator
         getLoginData()
         isLoading.value = false
+
+        if (!authStore.getUserId) {
+            authStore.setUserInfo(undefined)
+        }
     }
 })
 
