@@ -792,8 +792,10 @@ export default class CircuitElement {
 
         console.log('Deleted element:', this.objectType, this.id)
 
-        if (!this._isRemoteUpdate && this.id) {
+        if (this._isRemoteUpdate && this.id) {
             deleteFromCollab(this.id) // Use ID instead of this
+        } else {
+            console.log('Not deleting from collab, remote update')
         }
     }
 

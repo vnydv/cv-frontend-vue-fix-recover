@@ -69,11 +69,11 @@ export function syncToCollab(element) {
         if (!collabStore.getEnableCollab || element._isRemoteUpdate) {
             return
         }
-        
+
         const yElements = collabStore.getYElements
         if (!yElements) return
-        
-            // Assign ID if missing
+
+        // Assign ID if missing
         if (!element.id) {
             element.id = generateElementId(element)
         }
@@ -90,7 +90,7 @@ export function syncToCollab(element) {
             bitWidth: element.bitWidth,
             customData: element.customSave ? element.customSave() : {}
         }
-        
+
         yElements.set(element.id, elementData)
         console.log('Synced to collab:', element.id)
     } catch (err) {
@@ -104,10 +104,10 @@ export function deleteFromCollab(elementId) {
     try {
         const collabStore = useCollabProjectStore()
         if (!collabStore.getEnableCollab) return
-        
+
         const yElements = collabStore.getYElements
         if (!yElements) return
-        
+
         yElements.delete(elementId)
         console.log('Deleted from collab:', elementId)
     } catch (err) {
@@ -117,7 +117,7 @@ export function deleteFromCollab(elementId) {
 
 // 5. Integration functions - call these in your existing code
 export function startMinimalCollab() {
-    
+
     // Sync existing elements
     if (typeof globalScope !== 'undefined' && globalScope && globalScope.allElements) {
         globalScope.allElements.forEach(element => {
@@ -132,7 +132,7 @@ export function startMinimalCollab() {
 export function applyRemoteElementChange(elementData: any) {
     // Find existing element
     const existingElement = findElementById(elementData.id)
-    
+
     if (existingElement) {
         // Update existing element
         updateRemoteElement(existingElement, elementData)
@@ -156,12 +156,12 @@ function findElementById(id: string) {
 function createRemoteElement(elementData: any) {
     // Mark as remote to prevent sync loops
     const tempRemoteFlag = true
-    
+
     // Create element using the factory
     const element = new modules[elementData.objectType]()
     element._isRemoteUpdate = true
     element.id = elementData.id
-    
+
     // Apply properties
     element.x = elementData.x
     element.y = elementData.y
@@ -169,31 +169,31 @@ function createRemoteElement(elementData: any) {
     element.direction = elementData.direction
     element.labelDirection = elementData.labelDirection
     element.bitWidth = elementData.bitWidth
-    
+
     // Apply custom data if available
     if (elementData.customData && element.customLoad) {
         element.customLoad(elementData.customData)
     }
-    
+
     console.log('Created remote element:', element.id)
 }
 
 function updateRemoteElement(element: any, elementData: any) {
     // Prevent sync loops
     element._isRemoteUpdate = true
-    
+
     // Update properties
     element.x = elementData.x
     element.y = elementData.y
     element.label = elementData.label || ''
     element.direction = elementData.direction
     element.labelDirection = elementData.labelDirection
-    
+
     // Clear flag after update
     setTimeout(() => {
         element._isRemoteUpdate = false
     }, 0)
-    
+
     console.log('Updated remote element:', element.id)
 }
 
@@ -203,5 +203,7 @@ export function deleteRemoteElement(elementId: string) {
         element._isRemoteUpdate = true
         element.delete()
         console.log('Deleted remote element:', elementId)
+    } else {
+        console.log('Remote element to delete not found:', elementId)
     }
 }

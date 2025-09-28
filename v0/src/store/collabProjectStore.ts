@@ -126,6 +126,7 @@ export const useCollabProjectStore = defineStore({
                             const elementData = this.yElements.get(key)
                             applyRemoteElementChange(elementData)
                         } else if (change.action === 'delete') {
+                            console.log('Element deleted from Yjs map:', key)
                             deleteRemoteElement(key)
                         }
                     })
