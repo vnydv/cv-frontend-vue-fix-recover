@@ -11,9 +11,9 @@
 
             <!-- smaller input field -->
             <div class="input-group mb-3 ml-3" style="max-width: 250px; padding-top: 1vh;">
-                <input
-                    type="text"
-                    class="form-control form-control-sm"
+                <input                    
+                    type="text"                    
+                    class="form-control form-control-sm"                    
                     placeholder="Enter circuit ID to collaborate"
                     v-model="shareId"
                 />
@@ -34,7 +34,7 @@
                 id="projectName"
                 class="projectName noSelect defaultCursor font-weight-bold"
             >
-                {{ projectStore.getProjectName }}
+                {{ promptStore.getProjectName }}
             </span>
             <UserMenu class="useMenuBtn" />
         </div>
@@ -60,10 +60,11 @@ import Hamburger from '@/Navbar/Hamburger/Hamburger.vue'
 import Hamburger2 from './Hamburger/Hamburger2.vue'
 import UserMenu from './User/UserMenu.vue'
 import { ref } from 'vue'
-import { useProjectStore } from '#/store/projectStore'
+import { usePromptStore } from '#/store/promptStore'
+
 
 const navbarLogo = ref('logo')
-const projectStore = useProjectStore()
+const promptStore = usePromptStore()
 const simulatorMobileStore = useSimulatorMobileStore()
 const collabProjectStore = useCollabProjectStore()
 
