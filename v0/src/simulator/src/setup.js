@@ -10,7 +10,7 @@ import { update, updateSimulationSet, updateCanvasSet } from './engine'
 import { setupUI } from './ux'
 import startMainListeners from './listeners'
 import { newCircuit } from './circuit'
-import load from './data/load'
+import load, {setupProjectMetadata} from './data/load'
 import save from './data/save'
 import { showTourGuide } from './tutorials'
 import setupModules from './moduleSetup'
@@ -26,6 +26,8 @@ import '../vendor/jquery-ui.min'
 import { confirmSingleOption } from '#/components/helpers/confirmComponent/ConfirmComponent.vue'
 import { getToken } from '#/pages/simulatorHandler.vue'
 import { usePromptStore } from '#/store/promptStore'
+import { initObservers } from '#/simulator/src/data/collabProject'
+import { useCollabProjectStore } from '#/store/collabProjectStore'
 
 /**
  * to resize window and setup things it
@@ -82,11 +84,17 @@ window.addEventListener('orientationchange', resetup) // listener
  */
 function setupEnvironment() {
     setupModules()
-    const projectId = generateId()
-    console.log('Setting up environment with projectId:', projectId);
+
+
+    setupProjectMetadata() // setup project metadata with new id and name
+
     const promptStore = usePromptStore()
-    promptStore.setProjectId(projectId)
+    const projectId = promptStore.getProjectId
+
+    console.log('Setting up environment with projectId:', projectId);
+    
     window.projectId = projectId
+
     updateSimulationSet(true)
     // const DPR = window.devicePixelRatio || 1 // unused variable
     newCircuit('Main')
@@ -94,7 +102,7 @@ function setupEnvironment() {
     resetup()
     setupCodeMirrorEnvironment()
 
-    console.log('Environment setup complete');
+    console.log('Environment setup complete with projectName:', promptStore.getProjectName);
 }
 
 /**
@@ -143,10 +151,10 @@ async function fetchProjectData(projectId) {
  * @category setup
  */
 async function loadProjectData() {
-    window.logixProjectId = window.logixProjectId ?? 0
-    if (window.logixProjectId !== 0) {
+    window.loginProjectId = window.loginProjectId ?? 0
+    if (window.loginProjectId !== 0) {
         $('.loadingIcon').fadeIn()
-        await fetchProjectData(window.logixProjectId)
+        await fetchProjectData(window.loginProjectId)
     } else if (localStorage.getItem('recover_login') && window.isUserLoggedIn) {
         // Restore unsaved data and save
         const data = JSON.parse(localStorage.getItem('recover_login'))

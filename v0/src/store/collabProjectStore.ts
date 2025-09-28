@@ -3,6 +3,7 @@
 
 import { defineStore } from 'pinia'
 import * as Y from 'yjs'
+import { generateSaveData } from '../simulator/src/data/save'
 
 interface collabStoreType {
     enableCollab: boolean
@@ -11,7 +12,7 @@ interface collabStoreType {
     collaborators: Array<{ id: number; name: string; avatar: string }>
     yjsDoc?: any
     yjsMap?: any
-    wsConnection?: any    
+    wsConnection?: any
 }
 
 // Flow
@@ -57,7 +58,7 @@ export const useCollabProjectStore = defineStore({
         userId: Math.floor(Math.random() * 10000), // random user id for demo purpose
         projectId: undefined,
         collaborators: [],
-        yjsDoc: new Y.Doc(),
+        yjsDoc: undefined,
         yjsMap: undefined,
         wsConnection: undefined
     }),
@@ -70,28 +71,61 @@ export const useCollabProjectStore = defineStore({
         },
         // data is sent to the server when user connects
         updateCollaborators(collaborators: Array<{ id: number; name: string; avatar: string }>): void {
-            this.collaborators = collaborators            
+            this.collaborators = collaborators
         },
         setYjsDoc(doc: any): void {
             this.yjsDoc = doc
             this.yjsMap = this.yjsDoc.getMap('projectData')
         },
+        setNewYjsDoc(): void {
+            if (!this.yjsDoc) {
+                this.yjsDoc = new Y.Doc()
+                this.yjsMap = this.yjsDoc.getMap('projectData')
 
-        joinRoom(user: { id: number; name: string; avatar: string }): void {
+                this.yjsDoc.on('update', (update: Uint8Array) => {
+                    const ws = this.wsConnection
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({
+                            type: 'sync',
+                            projectId: this.projectId,
+                            update: Array.from(update)
+                        }))
+                        console.log('Sent Yjs update to server')
+                    }
+                })
+            }
+        },
 
+        leaveRoom(): void {
             const ws = this.wsConnection
             if (ws && ws.readyState === WebSocket.OPEN) {
                 const message = {
-                    type: 'join',
+                    type: 'leave',
                     projectId: this.projectId,
-                    user
+                    userId: this.userId
                 }
                 ws.send(JSON.stringify(message))
-                console.log('Sent join for user:', user)
+                console.log('Sent leave for userId:', this.userId)
             } else {
-                console.warn('WebSocket is not connected. Cannot send join message.')
+                console.warn('WebSocket is not connected. Cannot send leave message.')
             }
         },
+        joinRoom(user: { id: number; name: string; avatar: string }): void {
+            const ws = this.wsConnection
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                // Only send local update if the doc has content and server may be empty
+                const update = this.yjsDoc && Y.encodeStateVector(this.yjsDoc).byteLength === 0
+                    ? Array.from(Y.encodeStateAsUpdate(this.yjsDoc))
+                    : undefined
+
+                const message: any = { type: 'join', projectId: this.projectId, user }
+                if (update) message.update = update
+
+                ws.send(JSON.stringify(message))
+                console.log('Sent join for user:', user, 'with update:', update ? 'yes' : 'no')
+            }
+        }
+        ,
 
         setWsConnection(ws: any): void {
             if (!ws) {
@@ -105,14 +139,18 @@ export const useCollabProjectStore = defineStore({
 
             ws.onmessage = (event: MessageEvent) => {
                 const data = JSON.parse(event.data)
+
                 if (data.type === 'collaborators') {
                     this.updateCollaborators(data.collaborators)
                 }
+
                 if (data.type === 'init') {
                     const update = new Uint8Array(data.update)
+                    // Apply server update first
                     Y.applyUpdate(this.yjsDoc, update)
-                    console.log('Received initial Yjs document state from server')
+                    console.log('Merged initial Yjs document state from server')
                 }
+
                 if (data.type === 'sync') {
                     const update = new Uint8Array(data.update)
                     Y.applyUpdate(this.yjsDoc, update)
@@ -120,12 +158,13 @@ export const useCollabProjectStore = defineStore({
                 }
             }
 
+
             ws.onopen = () => {
                 console.log('WS connected')
                 console.log('Enabling collaboration for projectId:', this.projectId)
                 this.doEnableCollab(true)
 
-                // send the current user as a collaborator
+                // Send join message with doc update
                 this.joinRoom({ id: this.userId, name: `User${this.userId}`, avatar: 'dummy.png' })
             }
 
@@ -150,9 +189,10 @@ export const useCollabProjectStore = defineStore({
         // may need to send events to update the collaborators when
         // a new user joins or leaves for now just check every few seconds
         // the server will send the collaborators data
-        getCollaborators(): Array<{ id: number; name: string; avatar: string }> {            
+        getCollaborators(): Array<{ id: number; name: string; avatar: string }> {
             return this.collaborators
         },
+
         getYjsDoc(): any {
             return this.yjsDoc
         },
@@ -160,7 +200,7 @@ export const useCollabProjectStore = defineStore({
             return this.wsConnection
         },
         getYjsMap(): any {
-            if (!this.yjsMap && this.yjsDoc) {
+            if (!this.yjsMap && this.getYjsDoc) {
                 // initialize the Y.Map for project data if not already done
                 this.yjsMap = this.yjsDoc.getMap('projectData')
             }

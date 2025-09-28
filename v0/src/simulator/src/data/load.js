@@ -22,6 +22,9 @@ import { TestbenchData } from '#/simulator/src/testbench'
 import { SimulatorStore } from '#/store/SimulatorStore/SimulatorStore'
 import { toRefs } from 'vue'
 import { moduleList } from '../metadata'
+import { usePromptStore } from '#/store/promptStore'
+import { useCollabProjectStore } from '#/store/collabProjectStore'
+import { initObservers } from '#/simulator/src/data/collabProject'
 
 /**
  * Backward compatibility - needs to be deprecated
@@ -197,6 +200,34 @@ export function loadScope(scope, data) {
     }
 }
 
+export function setupProjectMetadata(id=undefined, name=undefined) {
+    // set the project id
+    const promptStore = usePromptStore()
+    if (id) {
+        promptStore.setProjectId(id)
+    } else {
+        console.log('No projectId found in the data being loaded')
+        promptStore.setProjectId(generateId()) // set a new project id
+    }
+
+    console.log('ProjectId set to:', promptStore.getProjectId)
+
+    if (!name || name.trim().length === 0) {
+        console.log('No projectName found in the data being loaded')
+        name = 'Untitled'
+    }
+
+    setProjectName(name)
+
+    // create a new yjs doc for this project
+    const collabProjectStore = useCollabProjectStore()
+    collabProjectStore.setNewYjsDoc(undefined) // using undefined to get a new doc
+
+    initObservers() // enable collaboration observers
+
+}
+    
+
 // Function to load project from data
 /**
  * loads a saved project
@@ -209,13 +240,14 @@ export default function load(data) {
     const simulatorStore = SimulatorStore()
     const { circuit_list } = toRefs(simulatorStore)
 
+    console.log('Loading Data', data)
+
     if (!data) {
         setProjectName(__projectName)
         return
     }
 
-    var { projectId } = data
-    setProjectName(data.name)
+    setupProjectMetadata(data.projectId, data.projectName)
 
     globalScope = undefined
     resetScopeList() // Remove default scope

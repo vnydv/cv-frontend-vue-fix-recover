@@ -1,5 +1,6 @@
 import { HTMLContent } from '@tiptap/core'
 import { defineStore } from 'pinia'
+import { useCollabProjectStore } from '#/store/collabProjectStore'
 
 interface promptStoreType {
     resolvePromise: Function
@@ -77,8 +78,8 @@ export const usePromptStore = defineStore({
         },
         UpdateProjectDetail: {
             activate: false,
-            projectId: 0,
-            projectName: '',
+            projectId: "",
+            projectName: "Untitled",
             projectTags: '',
             projectType: 'Public',
             projectDescription: '',
@@ -87,8 +88,14 @@ export const usePromptStore = defineStore({
     actions: {
         // resolvePromise(): any {},
         setProjectName(projectName: string): void {
+            if (projectName === this.UpdateProjectDetail.projectName) return // no change
             this.UpdateProjectDetail.projectName = projectName
+            const collabProjectStore = useCollabProjectStore()
+            const yjsMap = collabProjectStore.getYjsMap
+            if (!yjsMap) return
+            yjsMap.set('projectName', projectName) // sync to Yjs
         },
+
         setProjectId(projectId: string): void {
             this.UpdateProjectDetail.projectId = projectId
         },

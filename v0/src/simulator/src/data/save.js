@@ -12,12 +12,12 @@ import { layoutModeGet, toggleLayoutMode } from '../layoutMode'
 import { verilogModeGet } from '../Verilog2CV'
 import domtoimage from 'dom-to-image'
 import canvasToSvg from "canvas-to-svg"
-import { useProjectStore } from '#/store/projectStore'
 import { provideProjectName } from '#/components/helpers/promptComponent/PromptComponent.vue'
 import { UpdateProjectDetail } from '#/components/helpers/createNewProject/UpdateProjectDetail.vue'
 import { confirmOption } from '#/components/helpers/confirmComponent/ConfirmComponent.vue'
 import { getToken } from '#/pages/simulatorHandler.vue'
 import { renderOrder } from '../metadata'
+import { usePromptStore } from '#/store/promptStore'
 
 // var projectName = undefined
 
@@ -27,7 +27,7 @@ import { renderOrder } from '../metadata'
  * @category data
  */
 export function setProjectName(name) {
-    const projectStore = useProjectStore()
+    const promptStore = usePromptStore()
     if (name == undefined) {
         // $('#projectName').html('Untitled')
         return
@@ -35,7 +35,7 @@ export function setProjectName(name) {
     name = stripTags(name)
     // projectName = name
     // $('#projectName').html(name)
-    projectStore.setProjectName(name)
+    promptStore.setProjectName(name)
 }
 
 /**
@@ -44,9 +44,8 @@ export function setProjectName(name) {
  * @category data
  */
 export function getProjectName() {
-    const projectStore = useProjectStore()
-    if (projectStore.getProjectNameDefined)
-        return projectStore.getProjectName.trim()
+    const promptStore = usePromptStore()
+    if (promptStore.getProjectName != undefined) return promptStore.getProjectName
     else return undefined
 }
 /**
