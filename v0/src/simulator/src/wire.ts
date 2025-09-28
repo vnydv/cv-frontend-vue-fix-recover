@@ -5,6 +5,7 @@ import Node from './node';
 import { updateSimulationSet, forceResetNodesSet } from './engine';
 import { colors } from './themer/themer';
 import CircuitElement from './circuitElement';
+import { deleteNodeConnectionFromCollab } from './data/collabProject';
 
 interface Scope {
     wires: Wire[];
@@ -127,9 +128,16 @@ export default class Wire {
         this.node1.checkDeleted();
         this.node2.checkDeleted();
         this.scope.timeStamp = Date.now();
+
+
     }
 
     private removeMutualConnections(): void {
+
+        if (!this._isRemoteUpdate) {
+            deleteNodeConnectionFromCollab(this.node1, this.node2);
+        }
+
         this.removeConnection(this.node1, this.node2);
         this.removeConnection(this.node2, this.node1);
     }

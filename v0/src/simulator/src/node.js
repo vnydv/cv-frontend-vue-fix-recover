@@ -938,6 +938,14 @@ export default class Node {
     delete() {
         updateSimulationSet(true)
         this.deleted = true
+
+        // Sync connection deletions BEFORE removing them locally
+        
+        for (let i = 0; i < this.connections.length; i++) {
+            deleteNodeConnectionFromCollab(this, this.connections[i])
+        }
+        
+
         this.parent.scope.allNodes = this.parent.scope.allNodes.filter(x => x !== this)
         this.parent.scope.nodes = this.parent.scope.nodes.filter(x => x !== this)
 
@@ -945,7 +953,7 @@ export default class Node {
 
         if (simulationArea.lastSelected == this)
             simulationArea.lastSelected = undefined
-        for (var i = 0; i < this.connections.length; i++) {
+        for (let i = 0; i < this.connections.length; i++) {
             this.connections[i].connections = this.connections[i].connections.filter(x => x !== this)
             this.connections[i].checkDeleted()
         }

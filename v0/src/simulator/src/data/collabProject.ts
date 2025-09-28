@@ -193,6 +193,7 @@ function updateRemoteElement(element: any, elementData: any) {
     element.label = elementData.label || ''
     element.direction = elementData.direction
     element.labelDirection = elementData.labelDirection
+    element.newElement = false  // Mark as not new
 
     // Clear flag after update
     setTimeout(() => {
@@ -259,9 +260,6 @@ export function createRemoteConnection(connectionData: any) {
     
     console.log('Created remote connection between nodes:', node1.id, node2.id)
 
-    console.log('Total wires in scope:', globaScope.wires.length)
-    console.log('Wire added to scope:', globalScope.wires.includes(wire))
-
 }
 
 export function deleteRemoteConnection(connectionId: string) {
@@ -286,7 +284,9 @@ export function deleteRemoteConnection(connectionId: string) {
         )
         if (wire) {
             wire._isRemoteUpdate = true
+            wire.scope.wires = wire.scope.wires.filter(x => x !== wire)
             wire.delete()
+            scheduleUpdate() // Force visual update
         }
         
         console.log('Deleted remote connection')
