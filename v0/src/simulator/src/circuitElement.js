@@ -261,14 +261,14 @@ export default class CircuitElement {
      * @memberof CircuitElement
      */
     drag() {
-        console.log(
-            'Dragging element:',
-            this.objectType,
-            this.id,
-            'at position:',
-            this.x,
-            this.y
-        )
+        // console.log(
+        //     'Dragging element:',
+        //     this.objectType,
+        //     this.id,
+        //     'at position:',
+        //     this.x,
+        //     this.y
+        // )
 
         if (!layoutModeGet()) {
             this.x =
@@ -405,14 +405,14 @@ export default class CircuitElement {
             }
         }
 
-        console.log(
-            'Updated element:',
-            this.objectType,
-            this.id,
-            'at position:',
-            this.x,
-            this.y
-        )
+        // console.log(
+        //     'Updated element:',
+        //     this.objectType,
+        //     this.id,
+        //     'at position:',
+        //     this.x,
+        //     this.y
+        // )
         syncToCollab(this) // Sync element state to collaboration backend
 
         return update
@@ -568,13 +568,13 @@ export default class CircuitElement {
     setLabel(label) {
         this.label = label || ''
 
-        console.log(
-            'Set label of element:',
-            this.objectType,
-            this.id,
-            'to:',
-            this.label
-        )
+        // console.log(
+        //     'Set label of element:',
+        //     this.objectType,
+        //     this.id,
+        //     'to:',
+        //     this.label
+        // )
         syncToCollab(this) // Sync element state to collaboration backend
     }
 

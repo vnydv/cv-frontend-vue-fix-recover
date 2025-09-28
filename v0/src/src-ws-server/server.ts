@@ -81,7 +81,7 @@ wss.on('connection', (ws) => {
             // sender user
             const sender = room.users.find(u => u.ws === ws)?.user
 
-            console.log(`Received update from user ${sender?.name} in room ${currentRoom}`)
+            // console.log(`Received update from user ${sender?.name} in room ${currentRoom}`)
 
             // rebroadcast to others
             room.users.forEach(({ ws: client }) => {

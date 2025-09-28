@@ -4,7 +4,9 @@
 import { defineStore } from 'pinia'
 import * as Y from 'yjs'
 import { generateSaveData } from '../simulator/src/data/save'
-import { startMinimalCollab, applyRemoteElementChange, deleteRemoteElement } from '../simulator/src/data/collabProject'
+import { startMinimalCollab, applyRemoteElementChange, deleteRemoteElement,
+    createRemoteConnection, deleteRemoteConnection
+ } from '../simulator/src/data/collabProject'
 import { constructNodeConnections, replace } from '../simulator/src/node'
 import { usePromptStore } from './promptStore'
 import { start } from '@popperjs/core'
@@ -128,6 +130,17 @@ export const useCollabProjectStore = defineStore({
                         } else if (change.action === 'delete') {
                             console.log('Element deleted from Yjs map:', key)
                             deleteRemoteElement(key)
+                        }
+                    })
+                })
+
+                this.yNodes.observe((event) => {
+                    event.changes.keys.forEach((change, key) => {
+                        if (change.action === 'add') {
+                            const connectionData = this.yNodes.get(key)
+                            createRemoteConnection(connectionData)
+                        } else if (change.action === 'delete') {
+                            deleteRemoteConnection(key)
                         }
                     })
                 })

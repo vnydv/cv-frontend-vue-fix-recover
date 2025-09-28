@@ -15,6 +15,8 @@ import Wire from './wire'
 import { colors } from './themer/themer'
 import ContentionMeta from './contention'
 
+import { syncNodeConnectionToCollab, deleteNodeConnectionFromCollab } from './data/collabProject'
+
 /**
  * Constructs all the connections of Node node
  * @param {Node} node - node to be constructed
@@ -344,6 +346,8 @@ export default class Node {
         new Wire(this, n, this.parent.scope)
         this.connections.push(n)
         n.connections.push(this)
+
+        syncNodeConnectionToCollab(this, n);
 
         this.scope.timeStamp = new Date().getTime()
 
@@ -945,6 +949,8 @@ export default class Node {
             this.connections[i].connections = this.connections[i].connections.filter(x => x !== this)
             this.connections[i].checkDeleted()
         }
+
+        // deleteNodeConnectionFromCollab(this, this.connections);
 
         this.scope.timeStamp = new Date().getTime()
 

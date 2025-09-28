@@ -84,6 +84,7 @@ export default class Wire {
     }
 
     draw(): void {
+        // console.log('Drawing wire between:', this.node1.id, 'and', this.node2.id)
         drawLine(
             simulationArea.context,
             this.node1.absX(), this.node1.absY(),

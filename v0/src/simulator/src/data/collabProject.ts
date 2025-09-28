@@ -1,6 +1,9 @@
 import { useCollabProjectStore } from '#/store/collabProjectStore'
 import { usePromptStore } from '#/store/promptStore'
 import modules from '../modules'
+import Wire from '../wire'
+import Node from '../node'
+import { updateCanvasSet, scheduleUpdate } from '../engine'
 
 export function startCollab(shareId: string | null) {
     const promptStore = usePromptStore()
@@ -125,6 +128,8 @@ export function startMinimalCollab() {
         })
         console.log('Synced existing elements:', globalScope.allElements.length)
     }
+
+    syncExistingConnections()    
 }
 
 
@@ -206,4 +211,140 @@ export function deleteRemoteElement(elementId: string) {
     } else {
         console.log('Remote element to delete not found:', elementId)
     }
+}
+
+
+// Handle Nodes - required for Wires
+export function createRemoteConnection(connectionData: any) {
+    console.log('Creating remote connection:', connectionData)
+    
+    // Find nodes by their IDs
+    const node1 = findNodeById(connectionData.node1Id)
+    const node2 = findNodeById(connectionData.node2Id)
+    
+    if (!node1 || !node2) {
+        console.log('Nodes not found for connection:', connectionData)
+        // Retry after delay (nodes might not be created yet)
+        setTimeout(() => createRemoteConnection(connectionData), 100)
+        return
+    }
+    
+    // Check if connection already exists
+    if (node1.connections.includes(node2)) {
+        console.log('Connection already exists, skipping')
+        return
+    }
+    
+    // Create connection (mark as remote to prevent sync loop)
+    node1._isRemoteUpdate = true
+    node2._isRemoteUpdate = true
+    
+    node1.connections.push(node2)
+    node2.connections.push(node1)
+    
+    // Create visual wire
+    const wire = new Wire(node1, node2, node1.scope)
+    wire._isRemoteUpdate = true
+    
+    // Force canvas update to draw the wire
+    scheduleUpdate()
+    updateCanvasSet(true)
+
+    // Clear remote flags
+    setTimeout(() => {
+        node1._isRemoteUpdate = false
+        node2._isRemoteUpdate = false
+        wire._isRemoteUpdate = false
+    }, 0)
+    
+    console.log('Created remote connection between nodes:', node1.id, node2.id)
+
+    console.log('Total wires in scope:', globaScope.wires.length)
+    console.log('Wire added to scope:', globalScope.wires.includes(wire))
+
+}
+
+export function deleteRemoteConnection(connectionId: string) {
+    console.log('Deleting remote connection:', connectionId)
+    
+    const [node1Id, node2Id] = connectionId.split('_to_')
+    const node1 = findNodeById(node1Id)
+    const node2 = findNodeById(node2Id)
+    
+    if (node1 && node2) {
+        node1._isRemoteUpdate = true
+        node2._isRemoteUpdate = true
+        
+        // Remove from connections arrays
+        node1.connections = node1.connections.filter(n => n !== node2)
+        node2.connections = node2.connections.filter(n => n !== node1)
+        
+        // Remove wire
+        const wire = node1.scope.wires.find(w => 
+            (w.node1 === node1 && w.node2 === node2) || 
+            (w.node1 === node2 && w.node2 === node1)
+        )
+        if (wire) {
+            wire._isRemoteUpdate = true
+            wire.delete()
+        }
+        
+        console.log('Deleted remote connection')
+    }
+}
+
+export function findNodeById(nodeId: string): Node | null {
+    // Search through all nodes in scope
+    return globalScope.allNodes?.find(node => node.id === nodeId) || null
+}
+
+
+function syncExistingConnections() {
+    const processedPairs = new Set()
+    
+    globalScope.allNodes?.forEach(node => {
+        node.connections.forEach(connectedNode => {
+            const connectionId = generateConnectionId(node, connectedNode)
+            if (!processedPairs.has(connectionId)) {
+                processedPairs.add(connectionId)
+                syncNodeConnectionToCollab(node, connectedNode)
+            }
+        })
+    })
+    console.log('Synced existing connections:', processedPairs.size)
+}
+
+// Sync node connections
+export function syncNodeConnectionToCollab(node1: Node, node2: Node) {
+    const collabStore = useCollabProjectStore()
+    if (!collabStore.getEnableCollab) return
+    
+    const yConnections = collabStore.getYNodes
+    
+    const connectionId = generateConnectionId(node1, node2)
+    const connectionData = {
+        id: connectionId,
+        node1Id: node1.id,
+        node2Id: node2.id,
+        timestamp: Date.now()
+    }
+    
+    yConnections.set(connectionId, connectionData)
+    console.log('Synced node connection:', connectionId)
+}
+
+export function deleteNodeConnectionFromCollab(node1: Node, node2: Node) {
+    const collabStore = useCollabProjectStore()
+    if (!collabStore.getEnableCollab) return
+    
+    const yConnections = collabStore.getYNodes
+    const connectionId = generateConnectionId(node1, node2)
+    
+    yConnections.delete(connectionId)
+    console.log('Deleted node connection:', connectionId)
+}
+
+function generateConnectionId(node1: Node, node2: Node): string {
+    // Sort IDs to ensure consistent connection ID regardless of direction
+    return [node1.id, node2.id].sort().join('_to_')
 }
